@@ -176,8 +176,8 @@ def conv_network_train(x, weights, biases, keep_prob, c = 10.):
     # h1_fc = tf.nn.relu(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     # h1_fc = tf.tanh(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     # h1_fc_drop  = tf.nn.dropout(h1_fc, keep_prob)
-    h1_fc_shake = shakeout(reshape, weights['fc1'], c, keep_prob)
-    h1_fc = tf.nn.relu(tf.matmul(h1_fc_shake, weights['fc1']) + biases['fc1'])
+    h1_fc_shake = shakeout(reshape, weights['fc1'], biases['fc1'], c, keep_prob)
+    h1_fc = tf.nn.relu(h1_fc_shake)
     output = tf.matmul(h1_fc, weights['fc2']) + biases['fc2']
     return output, reshape, h1_fc_shake
 
@@ -296,22 +296,27 @@ def plot_weights(weights,pruning_info):
         fig.savefig('fig_v3/weights'+pruning_info)
         plt.close(fig)
 
-def shakeout(x, weights, c = 10., keep_rate = 0.5):
+def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     # keep rate = 1 -tau
     # random generation of t between (0,1)
-    prob = tf.random_uniform(tf.shape(x), dtype=tf.float32, minval = 0., maxval = 1.)
+    prob = tf.random_uniform([800,1], dtype=tf.float32, minval = 0., maxval = 1.)
     tau = 1 - keep_rate
-    rj = tf.cast(prob > tau, tf.float32)
+    rj_hat = tf.cast(prob > tau, tf.float32)
 
-    alpha = 1 / (1-tau)
-    beta = c * tau
 
-    wj = tf.reduce_sum(weights, 1)
+    r_j = rj_hat / (1-tau)
+    # print(r_j.get_shape())
+    hidden = r_j * weights + c * (r_j - 1) * tf.tanh(weights)
+    u = tf.matmul(x, hidden) + biases
 
-    pos = alpha + alpha * beta / wj
-    neg = - c / wj
-    factor = pos * (rj)+ neg * (1 - rj)
-    u = factor * x
+    # wj = tf.reduce_sum(weights, 1)
+    #
+    # pos = alpha + alpha * beta / wj
+    # neg = - c / wj
+    # factor = pos * (rj)+ neg * (1 - rj)
+    # u = factor * x
+    #
+    # prob = tf.random_uniform(tf.shape(x), dtype=tf.float32, minval = 0., maxval = 1.)
     return u
 
 def ClipIfNotNone(grad):
