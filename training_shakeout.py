@@ -107,8 +107,8 @@ def initialize_variables(model_number, no_pruning):
 #     'fc1': np.ones([IMAGE_SIZE // 4 * IMAGE_SIZE // 4 * 64, 512]),
 #     'fc2': np.ones([512, NUM_LABELS])
 # }
-# Create model
-def conv_network(x, weights, biases, keep_prob, c = 10.):
+
+def conv_network_test(x, weights, biases):
     conv = tf.nn.conv2d(x,
                         weights['cov1'],
                         strides = [1,1,1,1],
@@ -139,10 +139,47 @@ def conv_network(x, weights, biases, keep_prob, c = 10.):
     # h1_fc = tf.nn.relu(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     # h1_fc = tf.tanh(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     # h1_fc_drop  = tf.nn.dropout(h1_fc, keep_prob)
-    h1_fc_shake, rj= shakeout(reshape, weights['fc1'], c, keep_prob)
+    h1_fc = tf.nn.relu(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
+    output = tf.matmul(h1_fc, weights['fc2']) + biases['fc2']
+    return output
+# Create model
+def conv_network_train(x, weights, biases, keep_prob, c = 10.):
+    conv = tf.nn.conv2d(x,
+                        weights['cov1'],
+                        strides = [1,1,1,1],
+                        padding = 'VALID')
+    # conv = shakeout(conv, weights['cov1'], c, keep_prob)
+    relu = tf.nn.relu(tf.nn.bias_add(conv, biases['cov1']))
+    pool = tf.nn.max_pool(
+            relu,
+            ksize = [1 ,2 ,2 ,1],
+            strides = [1, 2, 2, 1],
+            padding = 'VALID')
+
+    conv = tf.nn.conv2d(pool,
+                        weights['cov2'],
+                        strides = [1,1,1,1],
+                        padding = 'VALID')
+    # conv = shakeout(conv, weights['cov2'], c, keep_prob)
+    relu = tf.nn.relu(tf.nn.bias_add(conv, biases['cov2']))
+    pool = tf.nn.max_pool(
+            relu,
+            ksize = [1 ,2 ,2 ,1],
+            strides = [1, 2, 2, 1],
+            padding = 'VALID')
+    '''get pool shape'''
+    # pool_shape = pool.get_shape().as_list()
+    # reshape = tf.reshape(
+    #     pool,
+    #     [-1, pool_shape[1]*pool_shape[2]*pool_shape[3]])
+    reshape = tf.reshape(pool, [-1, 4*4*50])
+    # h1_fc = tf.nn.relu(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
+    # h1_fc = tf.tanh(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
+    # h1_fc_drop  = tf.nn.dropout(h1_fc, keep_prob)
+    h1_fc_shake = shakeout(reshape, weights['fc1'], c, keep_prob)
     h1_fc = tf.nn.relu(tf.matmul(h1_fc_shake, weights['fc1']) + biases['fc1'])
     output = tf.matmul(h1_fc, weights['fc2']) + biases['fc2']
-    return output, reshape, h1_fc_shake, rj
+    return output, reshape, h1_fc_shake
 
 def calculate_non_zero_weights(weight):
     count = (weight != 0).sum()
@@ -275,8 +312,7 @@ def shakeout(x, weights, c = 10., keep_rate = 0.5):
     neg = - c / wj
     factor = pos * (rj)+ neg * (1 - rj)
     u = factor * x
-    return u, rj
-
+    return u
 
 def ClipIfNotNone(grad):
     if grad is None:
@@ -413,7 +449,8 @@ def main(argv = None):
         x_image = tf.reshape(x,[-1,28,28,1])
         (weights, biases) = initialize_variables(parent_dir+ 'weights/' +weight_file_name, no_pruning)
         # Construct model
-        pred, hidden_before, hidden_after, rj= conv_network(x_image, weights, biases, keep_prob, shakeout_const)
+        pred, hidden_before, hidden_after = conv_network_train(x_image, weights, biases, keep_prob, shakeout_const)
+        pred_test = conv_network_test(x_image, weights, biases)
         # lambda_1 = 0.00001
         # lambda_2 = 0.0005
 
@@ -423,6 +460,9 @@ def main(argv = None):
 
         correct_prediction = tf.equal(tf.argmax(pred,1), tf.argmax(y,1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+        test_prediction = tf.equal(tf.argmax(pred_test,1), tf.argmax(y,1))
+        test_accuracy = tf.reduce_mean(tf.cast(test_prediction, tf.float32))
 
 
         # I need to fetch this value
@@ -469,7 +509,7 @@ def main(argv = None):
                         iter_cnt = iter_cnt + 1
                         # execute a pruning
                         batch_x, batch_y = mnist.train.next_batch(batch_size)
-                        [_, cost_val, hb, ha, tdata] = sess.run([train_step, cost, hidden_before, hidden_after, rj], feed_dict = {
+                        [_, cost_val, hb, ha] = sess.run([train_step, cost, hidden_before, hidden_after], feed_dict = {
                                 x: batch_x,
                                 y: batch_y,
                                 keep_prob: dropout})
@@ -498,13 +538,13 @@ def main(argv = None):
                             accuracy_list = np.zeros(20)
                             accuracy_mean = 0
                             print('Training ends')
-                            test_accuracy = accuracy.eval({
+                            test_acc = test_accuracy.eval({
                                     x: mnist.test.images[:],
                                     y: mnist.test.labels[:],
                                     keep_prob: 1.})
-                            print('test accuracy is {}'.format(test_accuracy))
+                            print('test accuracy is {}'.format(test_acc))
                             # if (epoch > 300 or test_accuracy > 0.9936):
-                            if (epoch > 500 or test_accuracy > 0.99):
+                            if (epoch > 500 or test_acc > 0.99):
                                 print('stop training...')
                                 file_name = parent_dir + 'weights/' + weight_file_name
                                 print(file_name)

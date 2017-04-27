@@ -11,7 +11,7 @@ pfc2 = 0
 retrain = 0
 lr = 1e-4
 model_tag = 'pcov'+str(pcov)+'pcov'+str(pcov2)+'pfc'+str(pfc)+'pfc'+str(pfc2)
-parent_dir = './weights/'
+parent_dir = './'
 acc = 0
 save_name = 'cov0cov0fc0fc0'+'.pkl'
 
@@ -26,7 +26,7 @@ while (acc < 0.9936 and retrain < 1):
     ('-dropout', 0.5),
     ('-train',True),
     ('-weight_file_name', save_name),
-    ('-shakeout_c', 10.),
+    ('-shakeout_c', 0.5),
     ('-parent_dir', parent_dir),
     ('-nopruning', True)
     ]
