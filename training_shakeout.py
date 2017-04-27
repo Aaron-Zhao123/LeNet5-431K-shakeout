@@ -176,10 +176,10 @@ def conv_network_train(x, weights, biases, keep_prob, c = 10.):
     # h1_fc = tf.nn.relu(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     # h1_fc = tf.tanh(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     # h1_fc_drop  = tf.nn.dropout(h1_fc, keep_prob)
-    h1_fc_shake = shakeout(reshape, weights['fc1'], biases['fc1'], c, keep_prob)
+    h1_fc_shake, hidden = shakeout(reshape, weights['fc1'], biases['fc1'], c, keep_prob)
     h1_fc = tf.nn.relu(h1_fc_shake)
     output = tf.matmul(h1_fc, weights['fc2']) + biases['fc2']
-    return output, reshape, h1_fc_shake
+    return output, reshape, hidden
 
 def calculate_non_zero_weights(weight):
     count = (weight != 0).sum()
@@ -317,7 +317,7 @@ def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     # u = factor * x
     #
     # prob = tf.random_uniform(tf.shape(x), dtype=tf.float32, minval = 0., maxval = 1.)
-    return u
+    return u, hidden
 
 def ClipIfNotNone(grad):
     if grad is None:
@@ -522,6 +522,7 @@ def main(argv = None):
                         # print('check shakeout')
                         # print('before shakeout: {}'.format(hb))
                         # print('after shakeout: {}'.format(ha))
+                        # sys.exit()
                         # print('test : {}'.format(tdata))
 
                         training_cnt = training_cnt + 1
