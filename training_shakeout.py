@@ -347,7 +347,7 @@ def main(argv = None):
             }
             PRUNE_ONLY = False
             TRAIN = True
-            learning_rate = 1e-4
+            learning_rate = 1e-5
             dropout = 1
             shakeout_const = 10.
             weight_file_name = 'tmp'
