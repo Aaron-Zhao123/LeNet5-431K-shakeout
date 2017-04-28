@@ -20,7 +20,7 @@ class Usage(Exception):
 # Parameters
 # training_epochs = 500
 training_epochs = 700
-batch_size = 1
+batch_size = 64
 display_step = 1
 
 # Network Parameters
