@@ -309,8 +309,8 @@ def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     # hidden = r_j * weights + c * (r_j - 1) * tf.tanh(weights)
     # hidden = rj_hat * weights
     # hidden = c * tf.multiply((rj_hat - 1), tf.tanh(weights))
-    hidden =  tf.multiply(r_j, weights) + c * tf.multiply((r_j - 1.), tf.tanh(weights))
-    # hidden =  tf.multiply(r_j, weights)
+    # hidden =  tf.multiply(r_j, weights) + c * tf.multiply((r_j - 1.), tf.tanh(weights))
+    hidden =  tf.multiply(rj_hat, weights)
     u = tf.matmul(x, hidden) + biases
     # real_hidden = tf.matmul(x, weights) + biases
 
