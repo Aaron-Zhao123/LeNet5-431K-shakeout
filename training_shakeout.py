@@ -527,7 +527,7 @@ def main(argv = None):
 
                         training_cnt = training_cnt + 1
                         if (training_cnt % 100 == 0):
-                            [c, train_accuracy] = sess.run([cost, accuracy], feed_dict = {
+                            [c, train_accuracy] = sess.run([cost, test_accuracy], feed_dict = {
                                 x: batch_x,
                                 y: batch_y,
                                 keep_prob: 1.})
