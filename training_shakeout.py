@@ -521,11 +521,11 @@ def main(argv = None):
                                 x: batch_x,
                                 y: batch_y,
                                 keep_prob: dropout})
-                        print(80*'-')
-                        print('check shakeout')
-                        print('before shakeout: {}'.format(hb))
-                        print('after shakeout: {}'.format(ha))
-                        sys.exit()
+                        # print(80*'-')
+                        # print('check shakeout')
+                        # print('before shakeout: {}'.format(hb))
+                        # print('after shakeout: {}'.format(ha))
+                        # sys.exit()
                         # print('test : {}'.format(tdata))
 
                         training_cnt = training_cnt + 1
