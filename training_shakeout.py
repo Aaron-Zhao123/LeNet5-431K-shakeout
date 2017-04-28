@@ -432,8 +432,8 @@ def main(argv = None):
                     'fc1': np.ones([500]),
                     'fc2': np.ones([10])
                 }
-                with open(parent_dir + 'masks/' + weight_file_name,'rb') as f:
-                    (weights_mask,biases_mask) = pickle.load(f)
+                # with open(parent_dir + 'masks/' + weight_file_name,'rb') as f:
+                #     (weights_mask,biases_mask) = pickle.load(f)
         else:
             weights_mask = {
                 'cov1': np.ones([5, 5, NUM_CHANNELS, 20]),
