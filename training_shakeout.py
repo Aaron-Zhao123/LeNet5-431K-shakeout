@@ -20,7 +20,7 @@ class Usage(Exception):
 # Parameters
 # training_epochs = 500
 training_epochs = 700
-batch_size = 64
+batch_size = 1
 display_step = 1
 
 # Network Parameters
@@ -179,7 +179,7 @@ def conv_network_train(x, weights, biases, keep_prob, c = 10.):
     h1_fc_shake, hidden = shakeout(reshape, weights['fc1'], biases['fc1'], c, keep_prob)
     h1_fc = tf.nn.relu(h1_fc_shake)
     output = tf.matmul(h1_fc, weights['fc2']) + biases['fc2']
-    return output, weights['fc1'], hidden
+    return output, hidden, h1_fc_shake
 
 def calculate_non_zero_weights(weight):
     count = (weight != 0).sum()
@@ -299,7 +299,7 @@ def plot_weights(weights,pruning_info):
 def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     # keep rate = 1 -tau
     # random generation of t between (0,1)
-    prob = tf.random_uniform([800,1], dtype=tf.float32, minval = 0., maxval = 1.)
+    prob = tf.random_uniform([500], dtype=tf.float32, minval = 0., maxval = 1.)
     tau = 1 - keep_rate
     rj_hat = tf.cast(prob > tau, tf.float32)
 
@@ -307,8 +307,10 @@ def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     r_j = rj_hat / (1-tau)
     # print(r_j.get_shape())
     # hidden = r_j * weights + c * (r_j - 1) * tf.tanh(weights)
-    hidden = rj_hat * weights
-    u = tf.matmul(x, hidden) + biases
+    # hidden = rj_hat * weights
+    hidden =  tf.multiply(rj_hat, weights)
+    u = tf.matmul(x, hidden) + biases * rj_hat
+    real_hidden = tf.matmul(x, weights) + biases
 
     # wj = tf.reduce_sum(weights, 1)
     #
@@ -318,7 +320,7 @@ def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     # u = factor * x
     #
     # prob = tf.random_uniform(tf.shape(x), dtype=tf.float32, minval = 0., maxval = 1.)
-    return u, hidden
+    return u, real_hidden
 
 def ClipIfNotNone(grad):
     if grad is None:
@@ -519,11 +521,11 @@ def main(argv = None):
                                 x: batch_x,
                                 y: batch_y,
                                 keep_prob: dropout})
-                        # print(80*'-')
-                        # print('check shakeout')
-                        # print('before shakeout: {}'.format(hb))
-                        # print('after shakeout: {}'.format(ha))
-                        # sys.exit()
+                        print(80*'-')
+                        print('check shakeout')
+                        print('before shakeout: {}'.format(hb))
+                        print('after shakeout: {}'.format(ha))
+                        sys.exit()
                         # print('test : {}'.format(tdata))
 
                         training_cnt = training_cnt + 1
