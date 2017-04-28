@@ -179,7 +179,7 @@ def conv_network_train(x, weights, biases, keep_prob, c = 10.):
     h1_fc_shake, hidden = shakeout(reshape, weights['fc1'], biases['fc1'], c, keep_prob)
     h1_fc = tf.nn.relu(h1_fc_shake)
     output = tf.matmul(h1_fc, weights['fc2']) + biases['fc2']
-    return output, reshape, hidden
+    return output, weights['fc1'], hidden
 
 def calculate_non_zero_weights(weight):
     count = (weight != 0).sum()
