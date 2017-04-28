@@ -308,6 +308,7 @@ def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     # print(r_j.get_shape())
     # hidden = r_j * weights + c * (r_j - 1) * tf.tanh(weights)
     # hidden = rj_hat * weights
+    # hidden = c * tf.multiply((rj_hat - 1), tf.tanh(weights))
     hidden =  tf.multiply(r_j, weights) + c * tf.multiply((r_j - 1), tf.tanh(weights))
     u = tf.matmul(x, hidden) + biases
     real_hidden = tf.matmul(x, weights) + biases
@@ -320,7 +321,7 @@ def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     # u = factor * x
     #
     # prob = tf.random_uniform(tf.shape(x), dtype=tf.float32, minval = 0., maxval = 1.)
-    return u, real_hidden
+    return u, hidden
 
 def ClipIfNotNone(grad):
     if grad is None:
@@ -350,7 +351,7 @@ def main(argv = None):
             }
             PRUNE_ONLY = False
             TRAIN = True
-            learning_rate = 1e-5
+            learning_rate = 1e-4
             dropout = 1
             shakeout_const = 10.
             weight_file_name = 'tmp'
