@@ -26,7 +26,7 @@ while (acc < 0.9936 and retrain < 1):
     ('-dropout', 0.5),
     ('-train',True),
     ('-weight_file_name', save_name),
-    ('-shakeout_c', 5),
+    ('-shakeout_c', 0.1),
     ('-parent_dir', parent_dir),
     ('-nopruning', True)
     ]
