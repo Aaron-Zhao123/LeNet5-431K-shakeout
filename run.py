@@ -28,7 +28,7 @@ while (acc < 0.9936 and retrain < 1):
     ('-weight_file_name', save_name),
     ('-shakeout_c', 0.1),
     ('-parent_dir', parent_dir),
-    ('-nopruning', True)
+    ('-nopruning', False)
     ]
     lr = lr / float(2)
     acc = training_shakeout.main(param)
