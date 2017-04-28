@@ -23,7 +23,7 @@ while (acc < 0.9936 and retrain < 1):
     ('-pfc2',pfc2),
     ('-m',model_tag),
     ('-lr',lr),
-    ('-dropout', 0.5),
+    ('-dropout', 0.8),
     ('-train',True),
     ('-weight_file_name', save_name),
     ('-shakeout_c', 0.5),
