@@ -177,7 +177,7 @@ def conv_network_train(x, weights, biases, keep_prob, c = 10.):
     # h1_fc = tf.tanh(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     # h1_fc_drop  = tf.nn.dropout(h1_fc, keep_prob)
     h1_fc_shake, hidden = shakeout(reshape, weights['fc1'], biases['fc1'], c, keep_prob)
-    h1_fc = tf.nn.tanh(h1_fc_shake)
+    h1_fc = tf.nn.relu(h1_fc_shake)
     output = tf.matmul(h1_fc, weights['fc2']) + biases['fc2']
     return output, hidden, h1_fc_shake
 
@@ -312,7 +312,7 @@ def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     hidden =  tf.multiply(r_j, weights) + c * tf.multiply((r_j - 1), tf.tanh(weights))
     # hidden =  tf.multiply(r_j, weights)
     u = tf.matmul(x, hidden) + biases
-    real_hidden = tf.matmul(x, weights) + biases
+    # real_hidden = tf.matmul(x, weights) + biases
 
     # wj = tf.reduce_sum(weights, 1)
     #
