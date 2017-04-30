@@ -148,7 +148,6 @@ def conv_network_train(x, weights, biases, keep_prob, c = 10.):
                         weights['cov1'],
                         strides = [1,1,1,1],
                         padding = 'VALID')
-    # conv = shakeout(conv, weights['cov1'], c, keep_prob)
     relu = tf.nn.relu(tf.nn.bias_add(conv, biases['cov1']))
     pool = tf.nn.max_pool(
             relu,
@@ -160,7 +159,6 @@ def conv_network_train(x, weights, biases, keep_prob, c = 10.):
                         weights['cov2'],
                         strides = [1,1,1,1],
                         padding = 'VALID')
-    # conv = shakeout(conv, weights['cov2'], c, keep_prob)
     relu = tf.nn.relu(tf.nn.bias_add(conv, biases['cov2']))
     pool = tf.nn.max_pool(
             relu,
@@ -173,13 +171,15 @@ def conv_network_train(x, weights, biases, keep_prob, c = 10.):
     #     pool,
     #     [-1, pool_shape[1]*pool_shape[2]*pool_shape[3]])
     reshape = tf.reshape(pool, [-1, 4*4*50])
+    hidden_before = tf.matmul(reshape, weights['fc1']) + biases['fc1']
     # h1_fc = tf.nn.relu(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     # h1_fc = tf.tanh(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     # h1_fc_drop  = tf.nn.dropout(h1_fc, keep_prob)
-    h1_fc_shake, hidden = shakeout(reshape, weights['fc1'], biases['fc1'], c, keep_prob)
-    h1_fc = tf.nn.relu(h1_fc_shake)
+    h1_fc_shake, hidden_after, pos_indicate = shakeout(reshape, weights['fc1'], biases['fc1'], c, keep_prob)
+    # h1_fc = tf.nn.relu(h1_fc_shake)
+    h1_fc = tf.nn.tanh(h1_fc_shake)
     output = tf.matmul(h1_fc, weights['fc2']) + biases['fc2']
-    return output, hidden, h1_fc_shake
+    return output, hidden_before, hidden_after, pos_indicate
 
 def calculate_non_zero_weights(weight):
     count = (weight != 0).sum()
@@ -322,7 +322,7 @@ def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     # u = factor * x
     #
     # prob = tf.random_uniform(tf.shape(x), dtype=tf.float32, minval = 0., maxval = 1.)
-    return u, hidden
+    return u, u,  r_j
 
 def ClipIfNotNone(grad):
     if grad is None:
@@ -459,7 +459,7 @@ def main(argv = None):
         x_image = tf.reshape(x,[-1,28,28,1])
         (weights, biases) = initialize_variables(parent_dir+ 'weights/' +weight_file_name, no_pruning)
         # Construct model
-        pred, hidden_before, hidden_after = conv_network_train(x_image, weights, biases, keep_prob, shakeout_const)
+        pred, hidden_before, hidden_after, pos_indicate= conv_network_train(x_image, weights, biases, keep_prob, shakeout_const)
         pred_test = conv_network_test(x_image, weights, biases)
         # lambda_1 = 0.00001
         # lambda_2 = 0.0005
@@ -519,7 +519,7 @@ def main(argv = None):
                         iter_cnt = iter_cnt + 1
                         # execute a pruning
                         batch_x, batch_y = mnist.train.next_batch(batch_size)
-                        [_, cost_val, hb, ha] = sess.run([train_step, cost, hidden_before, hidden_after], feed_dict = {
+                        [_, cost_val, hb, ha, pos_ind] = sess.run([train_step, cost, hidden_before, hidden_after, pos_indicate], feed_dict = {
                                 x: batch_x,
                                 y: batch_y,
                                 keep_prob: dropout})
@@ -527,6 +527,7 @@ def main(argv = None):
                         # print('check shakeout')
                         # print('before shakeout: {}'.format(hb))
                         # print('after shakeout: {}'.format(ha))
+                        # print('shake positions: {}'.format(pos_ind))
                         # sys.exit()
                         # print('test : {}'.format(tdata))
 
