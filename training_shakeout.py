@@ -137,7 +137,6 @@ def conv_network_test(x, weights, biases):
     #     [-1, pool_shape[1]*pool_shape[2]*pool_shape[3]])
     reshape = tf.reshape(pool, [-1, 4*4*50])
     # h1_fc = tf.nn.relu(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
-    # h1_fc = tf.tanh(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     # h1_fc_drop  = tf.nn.dropout(h1_fc, keep_prob)
     h1_fc = tf.nn.relu(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     output = tf.matmul(h1_fc, weights['fc2']) + biases['fc2']
@@ -176,8 +175,8 @@ def conv_network_train(x, weights, biases, keep_prob, c = 10.):
     # h1_fc = tf.tanh(tf.matmul(reshape, weights['fc1']) + biases['fc1'])
     # h1_fc_drop  = tf.nn.dropout(h1_fc, keep_prob)
     h1_fc_shake, hidden_after, pos_indicate = shakeout(reshape, weights['fc1'], biases['fc1'], c, keep_prob)
-    # h1_fc = tf.nn.relu(h1_fc_shake)
-    h1_fc = tf.nn.tanh(h1_fc_shake)
+    h1_fc = tf.nn.relu(h1_fc_shake)
+    # h1_fc = tf.nn.tanh(h1_fc_shake)
     output = tf.matmul(h1_fc, weights['fc2']) + biases['fc2']
     return output, hidden_before, hidden_after, pos_indicate
 
