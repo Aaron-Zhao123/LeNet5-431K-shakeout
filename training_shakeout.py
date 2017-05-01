@@ -298,7 +298,7 @@ def plot_weights(weights,pruning_info):
 def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     # keep rate = 1 -tau
     # random generation of t between (0,1)
-    prob = tf.random_uniform([500], dtype=tf.float32, minval = 0., maxval = 1.)
+    prob = tf.random_uniform([800], dtype=tf.float32, minval = 0., maxval = 1.)
     tau = 1 - keep_rate
     rj_hat = tf.cast(prob > tau, tf.float32)
 
@@ -309,7 +309,7 @@ def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
     # hidden = rj_hat * weights
     # hidden = c * tf.multiply((rj_hat - 1), tf.tanh(weights))
     # hidden =  tf.multiply(r_j, weights) + c * tf.multiply((r_j - 1.), tf.tanh(weights))
-    hidden =  tf.multiply(r_j, weights) - c * (r_j - 1) * tf.tanh(weights)
+    hidden =  tf.multiply(r_j, weights) + c * (r_j - 1) * tf.tanh(weights)
     u = tf.matmul(x, hidden) + biases
     # u = tf.matmul(x, weights) + biases
 
