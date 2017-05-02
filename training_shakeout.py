@@ -574,7 +574,7 @@ def main(argv = None):
 
                                 # mask_info(weights_mask)
                                 # Test model
-                                return (test_accuracy, iter_cnt)
+                                return (test_acc, iter_cnt)
                             else:
                                 pass
                         # Compute average loss
