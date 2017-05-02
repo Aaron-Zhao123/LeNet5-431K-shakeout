@@ -545,8 +545,8 @@ def main(argv = None):
                             mask_info(weights_mask)
 
                         # if (accuracy_mean > 0.99 or epoch > 300):
-                        # if (accuracy_mean > 0.99 or epoch > 500):
-                        if (accuracy_mean > 0.99 or epoch > 1):
+                        if (accuracy_mean > 0.99 or epoch > 500):
+                        # if (accuracy_mean > 0.99 or epoch > 1):
                             accuracy_list = np.zeros(20)
                             accuracy_mean = 0
                             print('Training ends')
@@ -556,8 +556,8 @@ def main(argv = None):
                                     keep_prob: 1.})
                             print('test accuracy is {}'.format(test_acc))
                             # if (epoch > 300 or test_accuracy > 0.9936):
-                            # if (epoch > 500 or test_acc > 0.993):
-                            if (accuracy_mean > 0.99 or epoch > 1):
+                            if (epoch > 500 or test_acc > 0.993):
+                            # if (accuracy_mean > 0.99 or epoch > 1):
                                 print('stop training...')
                                 file_name = parent_dir + 'weights/' + weight_file_name
                                 print(file_name)
