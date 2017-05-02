@@ -545,7 +545,8 @@ def main(argv = None):
                             mask_info(weights_mask)
 
                         # if (accuracy_mean > 0.99 or epoch > 300):
-                        if (accuracy_mean > 0.99 or epoch > 500):
+                        # if (accuracy_mean > 0.99 or epoch > 500):
+                        if (accuracy_mean > 0.99 or epoch > 5):
                             accuracy_list = np.zeros(20)
                             accuracy_mean = 0
                             print('Training ends')
