@@ -24,10 +24,12 @@ for c_val in c_val_list:
     while (acc < 0.991 and retrain < 5):
         if (retrain > 3):
             lr = 1e-5
-            nopruning = False
         else:
             lr = 1e-4
+        if (retrain == 1):
             nopruning = True
+        else:
+            nopruning = False
         param = [
         ('-pcov',pcov),
         ('-pcov2',pcov2),

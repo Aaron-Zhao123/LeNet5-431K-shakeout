@@ -545,7 +545,7 @@ def main(argv = None):
                             mask_info(weights_mask)
 
                         # if (accuracy_mean > 0.99 or epoch > 300):
-                        if (accuracy_mean > 0.99 or epoch > 500):
+                        if (accuracy_mean > 0.99 or epoch > 300):
                         # if (accuracy_mean > 0.99 or epoch > 1):
                             accuracy_list = np.zeros(20)
                             accuracy_mean = 0
@@ -556,7 +556,7 @@ def main(argv = None):
                                     keep_prob: 1.})
                             print('test accuracy is {}'.format(test_acc))
                             # if (epoch > 300 or test_accuracy > 0.9936):
-                            if (epoch > 500 or test_acc > 0.993):
+                            if (epoch > 300 or test_acc > 0.991):
                             # if (accuracy_mean > 0.99 or epoch > 1):
                                 print('stop training...')
                                 file_name = parent_dir + 'weights/' + weight_file_name
@@ -597,7 +597,7 @@ def main(argv = None):
 
                 # mask_info(weights_mask)
                 # Test model
-                return (test_accuracy, iter_cnt)
+                return (test_acc, iter_cnt)
             if (PRUNE_ONLY == True):
                 print('hi in pruning')
                 prune_weights(  pruning_cov,
@@ -614,8 +614,8 @@ def main(argv = None):
             # Calculate accuracy
             correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-            test_accuracy = accuracy.eval({x: mnist.test.images, y: mnist.test.labels, keep_prob : 1.0})
-            print("Accuracy:", test_accuracy)
+            test_acc = test_accuracy.eval({x: mnist.test.images, y: mnist.test.labels, keep_prob : 1.0})
+            print("Accuracy:", test_acc)
             return (test_accuracy, iter_cnt)
     except Usage, err:
         print >> sys.stderr, err.msg
