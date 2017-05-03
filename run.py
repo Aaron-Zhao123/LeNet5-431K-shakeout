@@ -21,8 +21,8 @@ for c_val in c_val_list:
     save_name = 'cval' + str( int (round(c_val * 10))) + '.pkl'
     retrain = 0
     acc = 0
-    while (acc < 0.9936 and retrain < 2):
-        if (retrain == 1):
+    while (acc < 0.991 and retrain < 5):
+        if (retrain > 3):
             lr = 1e-5
             nopruning = False
         else:

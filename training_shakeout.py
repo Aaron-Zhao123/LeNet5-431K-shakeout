@@ -19,7 +19,7 @@ class Usage(Exception):
 
 # Parameters
 # training_epochs = 500
-training_epochs = 700
+training_epochs = 300
 batch_size = 64
 display_step = 1
 
