@@ -15,7 +15,7 @@ parent_dir = './'
 acc = 0
 # save_name = 'cov0cov0fc0fc0'+'.pkl'
 # c_val_list = [0.05, 0.1, 0.5, 1, 5, 10]
-c_val_list = [0.1, 5]
+c_val_list = [0.1, 0.5]
 
 for c_val in c_val_list:
     print(c_val)
