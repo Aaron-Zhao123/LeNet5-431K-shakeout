@@ -38,7 +38,7 @@ for c_val in c_val_list:
         ('-pfc2',pfc2),
         ('-m',model_tag),
         ('-lr',lr),
-        ('-dropout', 1.),
+        ('-dropout', 0.5),
         ('-train',True),
         ('-weight_file_name', save_name),
         ('-shakeout_c', c_val),
