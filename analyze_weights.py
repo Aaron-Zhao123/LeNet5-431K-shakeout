@@ -14,7 +14,7 @@ for c_val in c_val_list:
     save_name = 'cval' + str( int (round(c_val * 100))) + '.pkl'
     with open(parent_dir+ 'weights/' + save_name) as f:
         tmp = pickle.load(f)
-    tmp = tmp.flatten()
+    tmp = tmp['fc1'].flatten()
     mean = np.mean(tmp)
     std = np.std(tmp)
     mean_list.append(mean)
