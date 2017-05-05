@@ -19,7 +19,7 @@ c_val_list = [0.1, 10]
 
 for c_val in c_val_list:
     print(c_val)
-    save_name = 'cval' + str( int (round(c_val * 100))) + '.pkl'
+    save_name = 'cval' + str( int (round(c_val * 10))) + '.pkl'
     retrain = 0
     acc = 0
     while (acc < 0.991 and retrain < 5):
