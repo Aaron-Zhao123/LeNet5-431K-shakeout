@@ -582,6 +582,10 @@ def main(argv = None):
                     # Display logs per epoch step
                     print("Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(avg_cost))
                 print("Optimization Finished!")
+                test_acc = test_accuracy.eval({
+                        x: mnist.test.images[:],
+                        y: mnist.test.labels[:],
+                        keep_prob: 1.})
                 file_name = parent_dir + 'weights/' + weight_file_name
                 print(file_name)
                 with open(file_name, 'wb') as f:
