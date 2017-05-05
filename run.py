@@ -18,7 +18,7 @@ c_val_list = [0.05, 0.1, 0.5, 1, 5, 10]
 
 for c_val in c_val_list:
     print(c_val)
-    save_name = 'cval' + str( int (round(c_val * 10))) + '.pkl'
+    save_name = 'cval' + str( int (round(c_val * 100))) + '.pkl'
     retrain = 0
     acc = 0
     while (acc < 0.991 and retrain < 5):
@@ -26,7 +26,7 @@ for c_val in c_val_list:
             lr = 1e-5
         else:
             lr = 1e-4
-        if (retrain == 1):
+        if (retrain == 0):
             nopruning = True
         else:
             nopruning = False
