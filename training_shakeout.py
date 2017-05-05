@@ -142,7 +142,7 @@ def conv_network_test(x, weights, biases):
     output = tf.matmul(h1_fc, weights['fc2']) + biases['fc2']
     return output
 # Create model
-def conv_network_train(x, weights, biases, keep_prob, c = 10.):
+def conv_network_train(x, weights, biases, keep_prob, c):
     conv = tf.nn.conv2d(x,
                         weights['cov1'],
                         strides = [1,1,1,1],
@@ -295,7 +295,7 @@ def plot_weights(weights,pruning_info):
         fig.savefig('fig_v3/weights'+pruning_info)
         plt.close(fig)
 
-def shakeout(x, weights, biases, c = 10., keep_rate = 0.5):
+def shakeout(x, weights, biases, c, keep_rate):
     # keep rate = 1 -tau
     # random generation of t between (0,1)
     prob = tf.random_uniform([800,1], dtype=tf.float32, minval = 0., maxval = 1.)
