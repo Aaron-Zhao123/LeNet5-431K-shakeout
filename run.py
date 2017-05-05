@@ -15,7 +15,7 @@ parent_dir = './'
 acc = 0
 # save_name = 'cov0cov0fc0fc0'+'.pkl'
 # c_val_list = [0.05, 0.1, 0.5, 1, 5, 10]
-c_val_list = [0.1, 10]
+c_val_list = [0.1, 5]
 
 for c_val in c_val_list:
     print(c_val)
@@ -48,11 +48,9 @@ for c_val in c_val_list:
         lr = lr / float(2)
         acc = training_shakeout.main(param)
         retrain = retrain + 1
-
-retrain = 0
-lr = 1e-4
-model_tag = 'pcov'+str(pcov)+'pcov'+str(pcov2)+'pfc'+str(pfc)+'pfc'+str(pfc2)
-acc_list.append(acc)
+    retrain = 0
+    lr = 1e-4
+    acc_list.append(acc)
 
 print (acc_list)
 
